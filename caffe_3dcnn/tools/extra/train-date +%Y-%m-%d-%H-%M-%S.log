@@ -1,0 +1,549 @@
+I0509 22:02:50.495347 16883 caffe.cpp:185] Using GPUs 0
+I0509 22:02:50.518784 16883 caffe.cpp:190] GPU 0: GeForce GTX TITAN X
+I0509 22:02:50.852959 16883 solver.cpp:48] Initializing solver from parameters: 
+test_iter: 1
+test_interval: 600
+base_lr: 0.0001
+display: 200
+max_iter: 40000
+lr_policy: "fixed"
+momentum: 0.95
+weight_decay: 0.1
+snapshot: 40000
+snapshot_prefix: "./PaviaU"
+solver_mode: GPU
+device_id: 0
+net: "./PaviaU.prototxt"
+snapshot_format: HDF5
+I0509 22:02:50.853165 16883 solver.cpp:91] Creating training net from net file: ./PaviaU.prototxt
+I0509 22:02:50.853942 16883 net.cpp:313] The NetState phase (0) differed from the phase (1) specified by a rule in layer data
+I0509 22:02:50.854182 16883 net.cpp:49] Initializing net from parameters: 
+name: "PaviaU"
+state {
+  phase: TRAIN
+}
+layer {
+  name: "data"
+  type: "HDF5Data"
+  top: "data_ave"
+  top: "label"
+  include {
+    phase: TRAIN
+  }
+  hdf5_data_param {
+    source: "./train.txt"
+    batch_size: 100
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data_ave"
+  top: "conv1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    stride: 1
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+    kernel_h: 1
+    kernel_w: 11
+  }
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    stride: 3
+    kernel_h: 1
+    kernel_w: 3
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "pool1"
+  top: "pool1"
+}
+layer {
+  name: "ip1"
+  type: "InnerProduct"
+  bottom: "pool1"
+  top: "ip1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 100
+    weight_filler {
+      type: "gaussian"
+      std: 0.05
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "dropout"
+  type: "Dropout"
+  bottom: "ip1"
+  top: "ip1"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "ip2"
+  type: "InnerProduct"
+  bottom: "ip1"
+  top: "ip2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 9
+    weight_filler {
+      type: "gaussian"
+      std: 0.05
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "accuracy"
+  type: "Accuracy"
+  bottom: "ip2"
+  bottom: "label"
+  top: "accuracy"
+  include {
+  }
+}
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "ip2"
+  bottom: "label"
+  top: "loss"
+  include {
+    phase: TRAIN
+  }
+}
+I0509 22:02:50.854382 16883 layer_factory.hpp:77] Creating layer data
+I0509 22:02:50.854426 16883 net.cpp:91] Creating Layer data
+I0509 22:02:50.854450 16883 net.cpp:399] data -> data_ave
+I0509 22:02:50.854501 16883 net.cpp:399] data -> label
+I0509 22:02:50.854532 16883 hdf5_data_layer.cpp:79] Loading list of HDF5 filenames from: ./train.txt
+I0509 22:02:50.854578 16883 hdf5_data_layer.cpp:93] Number of HDF5 files: 1
+I0509 22:02:50.856072 16883 hdf5.cpp:32] Datatype class: H5T_FLOAT
+I0509 22:02:50.871703 16883 net.cpp:141] Setting up data
+I0509 22:02:50.871748 16883 net.cpp:148] Top shape: 100 1 1 103 (10300)
+I0509 22:02:50.871760 16883 net.cpp:148] Top shape: 100 1 1 1 (100)
+I0509 22:02:50.871768 16883 net.cpp:156] Memory required for data: 41600
+I0509 22:02:50.871781 16883 layer_factory.hpp:77] Creating layer label_data_1_split
+I0509 22:02:50.871805 16883 net.cpp:91] Creating Layer label_data_1_split
+I0509 22:02:50.871824 16883 net.cpp:425] label_data_1_split <- label
+I0509 22:02:50.871850 16883 net.cpp:399] label_data_1_split -> label_data_1_split_0
+I0509 22:02:50.871877 16883 net.cpp:399] label_data_1_split -> label_data_1_split_1
+I0509 22:02:50.871953 16883 net.cpp:141] Setting up label_data_1_split
+I0509 22:02:50.871978 16883 net.cpp:148] Top shape: 100 1 1 1 (100)
+I0509 22:02:50.871994 16883 net.cpp:148] Top shape: 100 1 1 1 (100)
+I0509 22:02:50.872005 16883 net.cpp:156] Memory required for data: 42400
+I0509 22:02:50.872017 16883 layer_factory.hpp:77] Creating layer conv1
+I0509 22:02:50.872051 16883 net.cpp:91] Creating Layer conv1
+I0509 22:02:50.872066 16883 net.cpp:425] conv1 <- data_ave
+I0509 22:02:50.872086 16883 net.cpp:399] conv1 -> conv1
+I0509 22:02:51.071128 16883 net.cpp:141] Setting up conv1
+I0509 22:02:51.071182 16883 net.cpp:148] Top shape: 100 20 1 93 (186000)
+I0509 22:02:51.071192 16883 net.cpp:156] Memory required for data: 786400
+I0509 22:02:51.071225 16883 layer_factory.hpp:77] Creating layer pool1
+I0509 22:02:51.071249 16883 net.cpp:91] Creating Layer pool1
+I0509 22:02:51.071259 16883 net.cpp:425] pool1 <- conv1
+I0509 22:02:51.071271 16883 net.cpp:399] pool1 -> pool1
+I0509 22:02:51.071363 16883 net.cpp:141] Setting up pool1
+I0509 22:02:51.071382 16883 net.cpp:148] Top shape: 100 20 1 31 (62000)
+I0509 22:02:51.071389 16883 net.cpp:156] Memory required for data: 1034400
+I0509 22:02:51.071396 16883 layer_factory.hpp:77] Creating layer relu1
+I0509 22:02:51.071410 16883 net.cpp:91] Creating Layer relu1
+I0509 22:02:51.071419 16883 net.cpp:425] relu1 <- pool1
+I0509 22:02:51.071429 16883 net.cpp:386] relu1 -> pool1 (in-place)
+I0509 22:02:51.071816 16883 net.cpp:141] Setting up relu1
+I0509 22:02:51.071838 16883 net.cpp:148] Top shape: 100 20 1 31 (62000)
+I0509 22:02:51.071846 16883 net.cpp:156] Memory required for data: 1282400
+I0509 22:02:51.071854 16883 layer_factory.hpp:77] Creating layer ip1
+I0509 22:02:51.071877 16883 net.cpp:91] Creating Layer ip1
+I0509 22:02:51.071885 16883 net.cpp:425] ip1 <- pool1
+I0509 22:02:51.071897 16883 net.cpp:399] ip1 -> ip1
+I0509 22:02:51.075287 16883 net.cpp:141] Setting up ip1
+I0509 22:02:51.075309 16883 net.cpp:148] Top shape: 100 100 (10000)
+I0509 22:02:51.075317 16883 net.cpp:156] Memory required for data: 1322400
+I0509 22:02:51.075332 16883 layer_factory.hpp:77] Creating layer dropout
+I0509 22:02:51.075352 16883 net.cpp:91] Creating Layer dropout
+I0509 22:02:51.075361 16883 net.cpp:425] dropout <- ip1
+I0509 22:02:51.075371 16883 net.cpp:386] dropout -> ip1 (in-place)
+I0509 22:02:51.075417 16883 net.cpp:141] Setting up dropout
+I0509 22:02:51.075430 16883 net.cpp:148] Top shape: 100 100 (10000)
+I0509 22:02:51.075438 16883 net.cpp:156] Memory required for data: 1362400
+I0509 22:02:51.075445 16883 layer_factory.hpp:77] Creating layer ip2
+I0509 22:02:51.075459 16883 net.cpp:91] Creating Layer ip2
+I0509 22:02:51.075466 16883 net.cpp:425] ip2 <- ip1
+I0509 22:02:51.075477 16883 net.cpp:399] ip2 -> ip2
+I0509 22:02:51.076231 16883 net.cpp:141] Setting up ip2
+I0509 22:02:51.076253 16883 net.cpp:148] Top shape: 100 9 (900)
+I0509 22:02:51.076261 16883 net.cpp:156] Memory required for data: 1366000
+I0509 22:02:51.076277 16883 layer_factory.hpp:77] Creating layer ip2_ip2_0_split
+I0509 22:02:51.076290 16883 net.cpp:91] Creating Layer ip2_ip2_0_split
+I0509 22:02:51.076298 16883 net.cpp:425] ip2_ip2_0_split <- ip2
+I0509 22:02:51.076308 16883 net.cpp:399] ip2_ip2_0_split -> ip2_ip2_0_split_0
+I0509 22:02:51.076323 16883 net.cpp:399] ip2_ip2_0_split -> ip2_ip2_0_split_1
+I0509 22:02:51.076380 16883 net.cpp:141] Setting up ip2_ip2_0_split
+I0509 22:02:51.076393 16883 net.cpp:148] Top shape: 100 9 (900)
+I0509 22:02:51.076403 16883 net.cpp:148] Top shape: 100 9 (900)
+I0509 22:02:51.076411 16883 net.cpp:156] Memory required for data: 1373200
+I0509 22:02:51.076417 16883 layer_factory.hpp:77] Creating layer accuracy
+I0509 22:02:51.076431 16883 net.cpp:91] Creating Layer accuracy
+I0509 22:02:51.076438 16883 net.cpp:425] accuracy <- ip2_ip2_0_split_0
+I0509 22:02:51.076447 16883 net.cpp:425] accuracy <- label_data_1_split_0
+I0509 22:02:51.076458 16883 net.cpp:399] accuracy -> accuracy
+I0509 22:02:51.076474 16883 net.cpp:141] Setting up accuracy
+I0509 22:02:51.076495 16883 net.cpp:148] Top shape: (1)
+I0509 22:02:51.076503 16883 net.cpp:156] Memory required for data: 1373204
+I0509 22:02:51.076510 16883 layer_factory.hpp:77] Creating layer loss
+I0509 22:02:51.076522 16883 net.cpp:91] Creating Layer loss
+I0509 22:02:51.076529 16883 net.cpp:425] loss <- ip2_ip2_0_split_1
+I0509 22:02:51.076539 16883 net.cpp:425] loss <- label_data_1_split_1
+I0509 22:02:51.076548 16883 net.cpp:399] loss -> loss
+I0509 22:02:51.076567 16883 layer_factory.hpp:77] Creating layer loss
+I0509 22:02:51.076925 16883 net.cpp:141] Setting up loss
+I0509 22:02:51.076972 16883 net.cpp:148] Top shape: (1)
+I0509 22:02:51.076982 16883 net.cpp:151]     with loss weight 1
+I0509 22:02:51.077008 16883 net.cpp:156] Memory required for data: 1373208
+I0509 22:02:51.077015 16883 net.cpp:217] loss needs backward computation.
+I0509 22:02:51.077023 16883 net.cpp:219] accuracy does not need backward computation.
+I0509 22:02:51.077033 16883 net.cpp:217] ip2_ip2_0_split needs backward computation.
+I0509 22:02:51.077040 16883 net.cpp:217] ip2 needs backward computation.
+I0509 22:02:51.077047 16883 net.cpp:217] dropout needs backward computation.
+I0509 22:02:51.077054 16883 net.cpp:217] ip1 needs backward computation.
+I0509 22:02:51.077061 16883 net.cpp:217] relu1 needs backward computation.
+I0509 22:02:51.077069 16883 net.cpp:217] pool1 needs backward computation.
+I0509 22:02:51.077076 16883 net.cpp:217] conv1 needs backward computation.
+I0509 22:02:51.077085 16883 net.cpp:219] label_data_1_split does not need backward computation.
+I0509 22:02:51.077092 16883 net.cpp:219] data does not need backward computation.
+I0509 22:02:51.077100 16883 net.cpp:261] This network produces output accuracy
+I0509 22:02:51.077108 16883 net.cpp:261] This network produces output loss
+I0509 22:02:51.077124 16883 net.cpp:274] Network initialization done.
+I0509 22:02:51.077585 16883 solver.cpp:181] Creating test net (#0) specified by net file: ./PaviaU.prototxt
+I0509 22:02:51.077630 16883 net.cpp:313] The NetState phase (1) differed from the phase (0) specified by a rule in layer data
+I0509 22:02:51.077649 16883 net.cpp:313] The NetState phase (1) differed from the phase (0) specified by a rule in layer loss
+I0509 22:02:51.077765 16883 net.cpp:49] Initializing net from parameters: 
+name: "PaviaU"
+state {
+  phase: TEST
+}
+layer {
+  name: "data"
+  type: "HDF5Data"
+  top: "data_ave"
+  top: "label"
+  include {
+    phase: TEST
+  }
+  hdf5_data_param {
+    source: "./test.txt"
+    batch_size: 40976
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data_ave"
+  top: "conv1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    stride: 1
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+    kernel_h: 1
+    kernel_w: 11
+  }
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    stride: 3
+    kernel_h: 1
+    kernel_w: 3
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "pool1"
+  top: "pool1"
+}
+layer {
+  name: "ip1"
+  type: "InnerProduct"
+  bottom: "pool1"
+  top: "ip1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 100
+    weight_filler {
+      type: "gaussian"
+      std: 0.05
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "dropout"
+  type: "Dropout"
+  bottom: "ip1"
+  top: "ip1"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "ip2"
+  type: "InnerProduct"
+  bottom: "ip1"
+  top: "ip2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 9
+    weight_filler {
+      type: "gaussian"
+      std: 0.05
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "accuracy"
+  type: "Accuracy"
+  bottom: "ip2"
+  bottom: "label"
+  top: "accuracy"
+  include {
+  }
+}
+I0509 22:02:51.077827 16883 layer_factory.hpp:77] Creating layer data
+I0509 22:02:51.077842 16883 net.cpp:91] Creating Layer data
+I0509 22:02:51.077852 16883 net.cpp:399] data -> data_ave
+I0509 22:02:51.077867 16883 net.cpp:399] data -> label
+I0509 22:02:51.077880 16883 hdf5_data_layer.cpp:79] Loading list of HDF5 filenames from: ./test.txt
+I0509 22:02:51.077910 16883 hdf5_data_layer.cpp:93] Number of HDF5 files: 1
+I0509 22:02:51.108707 16883 net.cpp:141] Setting up data
+I0509 22:02:51.108760 16883 net.cpp:148] Top shape: 40976 1 1 103 (4220528)
+I0509 22:02:51.108772 16883 net.cpp:148] Top shape: 40976 1 1 1 (40976)
+I0509 22:02:51.108779 16883 net.cpp:156] Memory required for data: 17046016
+I0509 22:02:51.108793 16883 layer_factory.hpp:77] Creating layer conv1
+I0509 22:02:51.108853 16883 net.cpp:91] Creating Layer conv1
+I0509 22:02:51.108865 16883 net.cpp:425] conv1 <- data_ave
+I0509 22:02:51.108880 16883 net.cpp:399] conv1 -> conv1
+I0509 22:02:51.110435 16883 net.cpp:141] Setting up conv1
+I0509 22:02:51.110458 16883 net.cpp:148] Top shape: 40976 20 1 93 (76215360)
+I0509 22:02:51.110466 16883 net.cpp:156] Memory required for data: 321907456
+I0509 22:02:51.110484 16883 layer_factory.hpp:77] Creating layer pool1
+I0509 22:02:51.110501 16883 net.cpp:91] Creating Layer pool1
+I0509 22:02:51.110508 16883 net.cpp:425] pool1 <- conv1
+I0509 22:02:51.110518 16883 net.cpp:399] pool1 -> pool1
+I0509 22:02:51.110582 16883 net.cpp:141] Setting up pool1
+I0509 22:02:51.110596 16883 net.cpp:148] Top shape: 40976 20 1 31 (25405120)
+I0509 22:02:51.110604 16883 net.cpp:156] Memory required for data: 423527936
+I0509 22:02:51.110611 16883 layer_factory.hpp:77] Creating layer relu1
+I0509 22:02:51.110622 16883 net.cpp:91] Creating Layer relu1
+I0509 22:02:51.110630 16883 net.cpp:425] relu1 <- pool1
+I0509 22:02:51.110641 16883 net.cpp:386] relu1 -> pool1 (in-place)
+I0509 22:02:51.110864 16883 net.cpp:141] Setting up relu1
+I0509 22:02:51.110883 16883 net.cpp:148] Top shape: 40976 20 1 31 (25405120)
+I0509 22:02:51.110891 16883 net.cpp:156] Memory required for data: 525148416
+I0509 22:02:51.110899 16883 layer_factory.hpp:77] Creating layer ip1
+I0509 22:02:51.110915 16883 net.cpp:91] Creating Layer ip1
+I0509 22:02:51.110924 16883 net.cpp:425] ip1 <- pool1
+I0509 22:02:51.110934 16883 net.cpp:399] ip1 -> ip1
+I0509 22:02:51.113804 16883 net.cpp:141] Setting up ip1
+I0509 22:02:51.113826 16883 net.cpp:148] Top shape: 40976 100 (4097600)
+I0509 22:02:51.113833 16883 net.cpp:156] Memory required for data: 541538816
+I0509 22:02:51.113848 16883 layer_factory.hpp:77] Creating layer dropout
+I0509 22:02:51.113862 16883 net.cpp:91] Creating Layer dropout
+I0509 22:02:51.113869 16883 net.cpp:425] dropout <- ip1
+I0509 22:02:51.113879 16883 net.cpp:386] dropout -> ip1 (in-place)
+I0509 22:02:51.113921 16883 net.cpp:141] Setting up dropout
+I0509 22:02:51.113934 16883 net.cpp:148] Top shape: 40976 100 (4097600)
+I0509 22:02:51.113941 16883 net.cpp:156] Memory required for data: 557929216
+I0509 22:02:51.113950 16883 layer_factory.hpp:77] Creating layer ip2
+I0509 22:02:51.113961 16883 net.cpp:91] Creating Layer ip2
+I0509 22:02:51.113970 16883 net.cpp:425] ip2 <- ip1
+I0509 22:02:51.113981 16883 net.cpp:399] ip2 -> ip2
+I0509 22:02:51.114217 16883 net.cpp:141] Setting up ip2
+I0509 22:02:51.114236 16883 net.cpp:148] Top shape: 40976 9 (368784)
+I0509 22:02:51.114243 16883 net.cpp:156] Memory required for data: 559404352
+I0509 22:02:51.114259 16883 layer_factory.hpp:77] Creating layer accuracy
+I0509 22:02:51.114272 16883 net.cpp:91] Creating Layer accuracy
+I0509 22:02:51.114279 16883 net.cpp:425] accuracy <- ip2
+I0509 22:02:51.114289 16883 net.cpp:425] accuracy <- label
+I0509 22:02:51.114298 16883 net.cpp:399] accuracy -> accuracy
+I0509 22:02:51.114316 16883 net.cpp:141] Setting up accuracy
+I0509 22:02:51.114326 16883 net.cpp:148] Top shape: (1)
+I0509 22:02:51.114333 16883 net.cpp:156] Memory required for data: 559404356
+I0509 22:02:51.114341 16883 net.cpp:219] accuracy does not need backward computation.
+I0509 22:02:51.114349 16883 net.cpp:219] ip2 does not need backward computation.
+I0509 22:02:51.114356 16883 net.cpp:219] dropout does not need backward computation.
+I0509 22:02:51.114363 16883 net.cpp:219] ip1 does not need backward computation.
+I0509 22:02:51.114370 16883 net.cpp:219] relu1 does not need backward computation.
+I0509 22:02:51.114377 16883 net.cpp:219] pool1 does not need backward computation.
+I0509 22:02:51.114384 16883 net.cpp:219] conv1 does not need backward computation.
+I0509 22:02:51.114392 16883 net.cpp:219] data does not need backward computation.
+I0509 22:02:51.114398 16883 net.cpp:261] This network produces output accuracy
+I0509 22:02:51.114411 16883 net.cpp:274] Network initialization done.
+I0509 22:02:51.114487 16883 solver.cpp:60] Solver scaffolding done.
+I0509 22:02:51.114815 16883 caffe.cpp:219] Starting Optimization
+I0509 22:02:51.114845 16883 solver.cpp:279] Solving PaviaU
+I0509 22:02:51.114852 16883 solver.cpp:280] Learning Rate Policy: fixed
+I0509 22:02:51.115391 16883 solver.cpp:337] Iteration 0, Testing net (#0)
+I0509 22:02:51.115413 16883 net.cpp:685] Ignoring source layer label_data_1_split
+I0509 22:02:51.115523 16883 net.cpp:685] Ignoring source layer ip2_ip2_0_split
+I0509 22:02:51.115538 16883 net.cpp:685] Ignoring source layer loss
+I0509 22:02:52.037468 16883 solver.cpp:404]     Test net output #0: accuracy = 0.0452948
+I0509 22:02:52.048313 16883 solver.cpp:228] Iteration 0, loss = 25.3908
+I0509 22:02:52.048342 16883 solver.cpp:244]     Train net output #0: accuracy = 0.12
+I0509 22:02:52.048362 16883 solver.cpp:244]     Train net output #1: loss = 25.3908 (* 1 = 25.3908 loss)
+I0509 22:02:52.048375 16883 sgd_solver.cpp:106] Iteration 0, lr = 0.0001
+I0509 22:02:52.862289 16883 solver.cpp:228] Iteration 200, loss = 2.03337
+I0509 22:02:52.862354 16883 solver.cpp:244]     Train net output #0: accuracy = 0.73
+I0509 22:02:52.862373 16883 solver.cpp:244]     Train net output #1: loss = 2.03337 (* 1 = 2.03337 loss)
+I0509 22:02:52.862385 16883 sgd_solver.cpp:106] Iteration 200, lr = 0.0001
+I0509 22:02:53.643368 16883 solver.cpp:228] Iteration 400, loss = 1.20114
+I0509 22:02:53.643414 16883 solver.cpp:244]     Train net output #0: accuracy = 0.69
+I0509 22:02:53.643429 16883 solver.cpp:244]     Train net output #1: loss = 1.20114 (* 1 = 1.20114 loss)
+I0509 22:02:53.643438 16883 sgd_solver.cpp:106] Iteration 400, lr = 0.0001
+I0509 22:02:54.419333 16883 solver.cpp:337] Iteration 600, Testing net (#0)
+I0509 22:02:54.419359 16883 net.cpp:685] Ignoring source layer label_data_1_split
+I0509 22:02:54.419370 16883 net.cpp:685] Ignoring source layer ip2_ip2_0_split
+I0509 22:02:54.419376 16883 net.cpp:685] Ignoring source layer loss
+I0509 22:02:55.305842 16883 solver.cpp:404]     Test net output #0: accuracy = 0.78751
+I0509 22:02:55.308941 16883 solver.cpp:228] Iteration 600, loss = 0.477457
+I0509 22:02:55.308967 16883 solver.cpp:244]     Train net output #0: accuracy = 0.8
+I0509 22:02:55.308985 16883 solver.cpp:244]     Train net output #1: loss = 0.477457 (* 1 = 0.477457 loss)
+I0509 22:02:55.308996 16883 sgd_solver.cpp:106] Iteration 600, lr = 0.0001
+I0509 22:02:56.124212 16883 solver.cpp:228] Iteration 800, loss = 0.441457
+I0509 22:02:56.124275 16883 solver.cpp:244]     Train net output #0: accuracy = 0.84
+I0509 22:02:56.124294 16883 solver.cpp:244]     Train net output #1: loss = 0.441457 (* 1 = 0.441457 loss)
+I0509 22:02:56.124305 16883 sgd_solver.cpp:106] Iteration 800, lr = 0.0001
+I0509 22:02:56.938887 16883 solver.cpp:228] Iteration 1000, loss = 0.457478
+I0509 22:02:56.938941 16883 solver.cpp:244]     Train net output #0: accuracy = 0.83
+I0509 22:02:56.938959 16883 solver.cpp:244]     Train net output #1: loss = 0.457479 (* 1 = 0.457479 loss)
+I0509 22:02:56.938971 16883 sgd_solver.cpp:106] Iteration 1000, lr = 0.0001
+I0509 22:02:57.748224 16883 solver.cpp:337] Iteration 1200, Testing net (#0)
+I0509 22:02:57.748266 16883 net.cpp:685] Ignoring source layer label_data_1_split
+I0509 22:02:57.748280 16883 net.cpp:685] Ignoring source layer ip2_ip2_0_split
+I0509 22:02:57.748287 16883 net.cpp:685] Ignoring source layer loss
+I0509 22:02:58.638005 16883 solver.cpp:404]     Test net output #0: accuracy = 0.839955
+I0509 22:02:58.641095 16883 solver.cpp:228] Iteration 1200, loss = 0.293369
+I0509 22:02:58.641121 16883 solver.cpp:244]     Train net output #0: accuracy = 0.88
+I0509 22:02:58.641139 16883 solver.cpp:244]     Train net output #1: loss = 0.293369 (* 1 = 0.293369 loss)
+I0509 22:02:58.641149 16883 sgd_solver.cpp:106] Iteration 1200, lr = 0.0001
+I0509 22:02:59.448087 16883 solver.cpp:228] Iteration 1400, loss = 0.31114
+I0509 22:02:59.448150 16883 solver.cpp:244]     Train net output #0: accuracy = 0.89
+I0509 22:02:59.448168 16883 solver.cpp:244]     Train net output #1: loss = 0.311141 (* 1 = 0.311141 loss)
+I0509 22:02:59.448179 16883 sgd_solver.cpp:106] Iteration 1400, lr = 0.0001
+I0509 22:03:00.249644 16883 solver.cpp:228] Iteration 1600, loss = 0.281062
+I0509 22:03:00.249702 16883 solver.cpp:244]     Train net output #0: accuracy = 0.88
+I0509 22:03:00.249722 16883 solver.cpp:244]     Train net output #1: loss = 0.281063 (* 1 = 0.281063 loss)
+I0509 22:03:00.249732 16883 sgd_solver.cpp:106] Iteration 1600, lr = 0.0001
+I0509 22:03:01.050104 16883 solver.cpp:337] Iteration 1800, Testing net (#0)
+I0509 22:03:01.050143 16883 net.cpp:685] Ignoring source layer label_data_1_split
+I0509 22:03:01.050155 16883 net.cpp:685] Ignoring source layer ip2_ip2_0_split
+I0509 22:03:01.050163 16883 net.cpp:685] Ignoring source layer loss
+I0509 22:03:01.902392 16883 solver.cpp:404]     Test net output #0: accuracy = 0.863603
+I0509 22:03:01.905297 16883 solver.cpp:228] Iteration 1800, loss = 0.208492
+I0509 22:03:01.905320 16883 solver.cpp:244]     Train net output #0: accuracy = 0.95
+I0509 22:03:01.905338 16883 solver.cpp:244]     Train net output #1: loss = 0.208493 (* 1 = 0.208493 loss)
+I0509 22:03:01.905347 16883 sgd_solver.cpp:106] Iteration 1800, lr = 0.0001
+I0509 22:03:02.684350 16883 solver.cpp:228] Iteration 2000, loss = 0.224744
+I0509 22:03:02.684391 16883 solver.cpp:244]     Train net output #0: accuracy = 0.93
+I0509 22:03:02.684411 16883 solver.cpp:244]     Train net output #1: loss = 0.224745 (* 1 = 0.224745 loss)
+I0509 22:03:02.684420 16883 sgd_solver.cpp:106] Iteration 2000, lr = 0.0001
+I0509 22:03:03.466477 16883 solver.cpp:228] Iteration 2200, loss = 0.256594
+I0509 22:03:03.466531 16883 solver.cpp:244]     Train net output #0: accuracy = 0.9
+I0509 22:03:03.466547 16883 solver.cpp:244]     Train net output #1: loss = 0.256594 (* 1 = 0.256594 loss)
+I0509 22:03:03.466557 16883 sgd_solver.cpp:106] Iteration 2200, lr = 0.0001
+I0509 22:03:04.241695 16883 solver.cpp:337] Iteration 2400, Testing net (#0)
+I0509 22:03:04.241726 16883 net.cpp:685] Ignoring source layer label_data_1_split
+I0509 22:03:04.241737 16883 net.cpp:685] Ignoring source layer ip2_ip2_0_split
+I0509 22:03:04.241744 16883 net.cpp:685] Ignoring source layer loss
+I0509 22:03:05.082862 16883 solver.cpp:404]     Test net output #0: accuracy = 0.870802
+I0509 22:03:05.085641 16883 solver.cpp:228] Iteration 2400, loss = 0.308113
+I0509 22:03:05.085665 16883 solver.cpp:244]     Train net output #0: accuracy = 0.88
+I0509 22:03:05.085681 16883 solver.cpp:244]     Train net output #1: loss = 0.308114 (* 1 = 0.308114 loss)
+I0509 22:03:05.085691 16883 sgd_solver.cpp:106] Iteration 2400, lr = 0.0001
+I0509 22:03:05.864496 16883 solver.cpp:228] Iteration 2600, loss = 0.24093
+I0509 22:03:05.864528 16883 solver.cpp:244]     Train net output #0: accuracy = 0.91
+I0509 22:03:05.864543 16883 solver.cpp:244]     Train net output #1: loss = 0.24093 (* 1 = 0.24093 loss)
+I0509 22:03:05.864552 16883 sgd_solver.cpp:106] Iteration 2600, lr = 0.0001
+I0509 22:03:06.643575 16883 solver.cpp:228] Iteration 2800, loss = 0.195133
+I0509 22:03:06.643604 16883 solver.cpp:244]     Train net output #0: accuracy = 0.91
+I0509 22:03:06.643617 16883 solver.cpp:244]     Train net output #1: loss = 0.195134 (* 1 = 0.195134 loss)
+I0509 22:03:06.643627 16883 sgd_solver.cpp:106] Iteration 2800, lr = 0.0001
+I0509 22:03:07.417955 16883 solver.cpp:337] Iteration 3000, Testing net (#0)
+I0509 22:03:07.417992 16883 net.cpp:685] Ignoring source layer label_data_1_split
+I0509 22:03:07.418002 16883 net.cpp:685] Ignoring source layer ip2_ip2_0_split
+I0509 22:03:07.418009 16883 net.cpp:685] Ignoring source layer loss
+I0509 22:03:08.256834 16883 solver.cpp:404]     Test net output #0: accuracy = 0.865141
+I0509 22:03:08.259594 16883 solver.cpp:228] Iteration 3000, loss = 0.221832
+I0509 22:03:08.259618 16883 solver.cpp:244]     Train net output #0: accuracy = 0.9
+I0509 22:03:08.259634 16883 solver.cpp:244]     Train net output #1: loss = 0.221833 (* 1 = 0.221833 loss)
+I0509 22:03:08.259644 16883 sgd_solver.cpp:106] Iteration 3000, lr = 0.0001

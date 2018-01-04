@@ -1,0 +1,1 @@
+/home/chh/caffe-master/caffe-master-ndconv-relu/examples/HSI/paviaU/3DCNNTestnoresNoise3/paviaU_plot_0_30000.h5

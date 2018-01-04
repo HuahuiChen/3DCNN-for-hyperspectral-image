@@ -1,0 +1,1 @@
+/home/chh/caffe-master/caffe-master-ndconv-relu/examples/HSI/salinas/3DCNNTestnoresNoise1/salinas_plot_45001_54129.h5

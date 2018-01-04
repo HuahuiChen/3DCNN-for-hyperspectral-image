@@ -1,0 +1,616 @@
+name: "PaviaU"
+layer {
+  name: "data2"
+  type: "HDF5Data"
+  top: "data_ave"
+  top: "label"
+  hdf5_data_param{
+    source: "./train.txt"
+    #batch_size:1600
+    batch_size:40
+    shuffle: 1
+  }
+  include {phase: TRAIN}
+}
+layer {
+  name: "data2"
+  type: "HDF5Data"
+  top: "data_ave"
+  top: "label"
+  hdf5_data_param{
+    source: "./test.txt"
+    #batch_size:59000
+batch_size:5092
+  }
+  include {phase: TEST}
+}
+
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data_ave"
+  top: "conv1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 10
+    #pad: 2
+    axis:1
+    kernel_size:3
+    kernel_size:3
+    kernel_size:11
+    stride: 1
+    stride: 1
+    stride: 3
+    engine: CAFFE
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+
+  }
+}
+
+
+
+
+
+
+
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "conv1"
+  top: "conv1"
+}
+
+
+
+
+
+layer {
+  name: "conv2_1"
+  type: "Convolution"
+  bottom: "conv1"
+  top: "conv2_1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 10
+    pad:0
+    pad:0
+    pad:0
+    axis:1
+    kernel_size:1
+    kernel_size:1
+    kernel_size:1
+    stride: 1
+    stride: 1
+    stride: 1
+    dilation: 1
+    dilation: 1
+    dilation: 1
+    engine: CAFFE
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+
+  }
+}
+
+
+
+
+
+
+layer {
+  name: "conv2_2"
+  type: "Convolution"
+  bottom: "conv1"
+  top: "conv2_2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 10
+    pad:0
+    pad:0
+    pad:1
+    axis:1
+    kernel_size:1
+    kernel_size:1
+    kernel_size:3
+    stride: 1
+    stride: 1
+    stride: 1
+    dilation: 1
+    dilation: 1
+    dilation: 1
+    engine: CAFFE
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+
+  }
+}
+
+
+
+
+
+
+layer {
+  name: "conv2_3"
+  type: "Convolution"
+  bottom: "conv1"
+  top: "conv2_3"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 10
+    pad:0
+    pad:0
+    pad:2
+    axis:1
+    kernel_size:1
+    kernel_size:1
+    kernel_size:5
+    stride: 1
+    stride: 1
+    stride: 1
+    dilation: 1
+    dilation: 1
+    dilation: 1
+    engine: CAFFE
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+
+  }
+}
+
+
+
+
+
+
+layer {
+  name: "conv2_4"
+  type: "Convolution"
+  bottom: "conv1"
+  top: "conv2_4"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 10
+    pad:0
+    pad:0
+    pad:5
+    axis:1
+    kernel_size:1
+    kernel_size:1
+    kernel_size:11
+    stride: 1
+    stride: 1
+    stride: 1
+    dilation: 1
+    dilation: 1
+    dilation: 1
+    engine: CAFFE
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+layer{
+     bottom: "conv2_1"
+     bottom: "conv2_2"
+     bottom: "conv2_3"
+     bottom: "conv2_4"
+     top: "conv2"
+     name: "conv2"
+     type: "Eltwise"
+}
+
+
+
+
+layer {
+  name: "reluconv2"
+  type: "ReLU"
+  bottom: "conv2"
+  top: "conv2"
+}
+
+
+
+
+
+
+
+layer {
+  name: "conv3_1"
+  type: "Convolution"
+  bottom: "conv2"
+  top: "conv3_1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 10
+    pad: 0
+    pad: 0
+    pad: 0
+    axis:1
+    kernel_size:1
+    kernel_size:1
+    kernel_size:1
+    stride: 1
+    stride: 1
+    stride: 1
+    engine: CAFFE
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+
+  }
+}
+
+
+
+
+
+layer {
+  name: "conv3_2"
+  type: "Convolution"
+  bottom: "conv2"
+  top: "conv3_2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 10
+    pad: 0
+    pad: 0
+    pad: 1
+    axis:1
+    kernel_size:1
+    kernel_size:1
+    kernel_size:3
+    stride: 1
+    stride: 1
+    stride: 1
+    engine: CAFFE
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+
+  }
+}
+
+
+
+
+
+
+layer {
+  name: "conv3_3"
+  type: "Convolution"
+  bottom: "conv2"
+  top: "conv3_3"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 10
+    pad: 0
+    pad: 0
+    pad: 3
+    axis:1
+    kernel_size:1
+    kernel_size:1
+    kernel_size:7
+    stride: 1
+    stride: 1
+    stride: 1
+    engine: CAFFE
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+
+  }
+}
+
+
+
+
+
+
+
+layer {
+  name: "conv3_4"
+  type: "Convolution"
+  bottom: "conv2"
+  top: "conv3_4"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 10
+    pad: 0
+    pad: 0
+    pad: 5
+    axis:1
+    kernel_size:1
+    kernel_size:1
+    kernel_size:11
+    stride: 1
+    stride: 1
+    stride: 1
+    engine: CAFFE
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+
+  }
+}
+
+
+
+
+layer{
+     bottom: "conv3_1"
+     bottom: "conv3_2"
+     bottom: "conv3_3"
+     bottom: "conv3_4"
+     top: "conv3"
+     name: "conv3"
+     type: "Eltwise"
+}
+
+
+
+
+layer {
+  name: "relu3"
+  type: "ReLU"
+  bottom: "conv3"
+  top: "conv3"
+}
+
+
+
+
+
+
+
+
+
+layer {
+  name: "conv4"
+  type: "Convolution"
+  bottom: "conv3"
+  top: "conv4"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 10
+    pad:0
+    pad:0
+    pad:0
+    axis:1
+    kernel_size:2
+    kernel_size:2
+    kernel_size:3
+    stride: 1
+    stride: 1
+    stride: 1
+    engine: CAFFE
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+
+  }
+}
+
+
+
+
+layer {
+  name: "relu2_3"
+  type: "ReLU"
+  bottom: "conv4"
+  top: "conv4"
+}
+
+
+
+
+
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv4"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    axis:1
+    kernel_size: 2
+    kernel_size: 2
+    kernel_size: 3
+    stride: 2
+    stride: 2
+    stride: 3
+    engine: CAFFE
+  }
+}
+
+
+layer {
+  name: "dropout"
+  type: "Dropout"
+  bottom: "pool1"
+  top: "pool1"
+  dropout_param{
+    dropout_ratio:0.6
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+layer {
+  name: "ip2"
+  type: "InnerProduct"
+  bottom: "pool1"
+  top: "ip2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 16
+
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+
+  }
+}
+
+
+layer {
+  name: "accuracy"
+  type: "Accuracy"
+  bottom: "ip2"
+  bottom: "label"
+  top: "accuracy"
+  include {
+    #phase: TEST
+  }
+}
+
+layer {
+  name:"loss"
+  type:"SoftmaxWithLoss"
+  bottom:"ip2"
+  bottom:"label"
+  top: "loss"
+  include{
+    phase: TRAIN
+  }
+}
+layer {
+  name: "hdf5out"
+  type: "HDF5Output"
+  bottom: "ip2"
+  bottom: "label"
+  hdf5_output_param{
+    file_name: "outputLabelTest.h5"
+  }
+  include{
+    phase: TEST
+  }
+}

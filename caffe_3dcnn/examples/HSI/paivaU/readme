@@ -1,0 +1,16 @@
+数据减均值
+train: 随机40976
+test: 随机40976(42776 - 1800)
+
+
+参数：
+
+初始化std=0.01
+train batch = 1000
+test batch = 40976
+weight_decay
+
+结果：
+train accuracy： 100%
+test accuracy : 13%
+
